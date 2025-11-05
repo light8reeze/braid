@@ -1,0 +1,9 @@
+services:
+  dev:
+    build: .
+    volumes:
+      - .:/workspace
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_ADMIN
