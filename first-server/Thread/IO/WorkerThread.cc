@@ -4,7 +4,7 @@
 namespace first {
 
     WorkerThread::WorkerThread(int queue_depth /* = 1024 */) 
-        : IORingThread(queue_depth) {
+        : IOURingThread(queue_depth) {
     }
 
     WorkerThread::~WorkerThread() {
@@ -12,7 +12,7 @@ namespace first {
     }
 
     void WorkerThread::initialize() {
-        IORingThread::initialize();
+        IOURingThread::initialize();
     }
 
     int WorkerThread::routine() {

@@ -1,4 +1,6 @@
 #pragma once
 
-using SocketFd = int;
-using ThreadId = int;
+namespace first {
+	using socket_fd = int;
+	using thread_id = int;
+}

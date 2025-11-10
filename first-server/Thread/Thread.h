@@ -21,6 +21,9 @@ namespace first {
 		void run();
 
 
+		int get_thread_id() const { return thread_id_; }
+
+
 	public:
 		virtual void initialize();
 

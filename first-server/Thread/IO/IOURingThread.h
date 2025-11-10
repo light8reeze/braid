@@ -3,11 +3,11 @@
 
 namespace first {
 
-    class IORingThread : public Thread {
+    class IOURingThread : public Thread {
 
     public:
-        IORingThread(int queue_depth = 1024);
-        virtual ~IORingThread();
+        IOURingThread(int queue_depth = 1024);
+        virtual ~IOURingThread();
 
 
     public:

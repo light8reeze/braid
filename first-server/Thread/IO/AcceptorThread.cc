@@ -7,7 +7,7 @@
 namespace first {
 
     AcceptorThread::AcceptorThread(int queue_depth /* = 1024 */, int port /* = 8080 */)
-        : IORingThread(queue_depth) , port_(port){
+        : IOURingThread(queue_depth) , port_(port){
     }
 
     AcceptorThread::~AcceptorThread() {
@@ -16,7 +16,7 @@ namespace first {
     }
 
     void AcceptorThread::initialize() {
-        IORingThread::initialize();
+        IOURingThread::initialize();
 
         listen_fd_ = socket(AF_INET, SOCK_STREAM, 0);
 	    int enable = 1;

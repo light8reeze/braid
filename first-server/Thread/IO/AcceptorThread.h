@@ -5,7 +5,7 @@
 
 namespace first {
 
-    class AcceptorThread : public IORingThread {
+    class AcceptorThread : public IOURingThread {
         public:
             AcceptorThread(int queue_depth = 1024, int port = 8080);
             virtual ~AcceptorThread();
