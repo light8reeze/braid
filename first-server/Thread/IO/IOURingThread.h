@@ -1,5 +1,5 @@
 #include "Thread.h"
-#include <liburing.h>
+#include <IOUring.h>
 
 namespace first {
 
@@ -11,10 +11,10 @@ namespace first {
 
 
     public:
-        io_uring* getRing();
+        IOUring* getRing();
 
 
     protected:
-        io_uring ring_;
+		IOUring ring_;
     };
 }

@@ -8,7 +8,6 @@ namespace first {
     }
 
     WorkerThread::~WorkerThread() {
-        io_uring_queue_exit(&ring_);
     }
 
     void WorkerThread::initialize() {
@@ -16,17 +15,9 @@ namespace first {
     }
 
     int WorkerThread::routine() {
-        io_uring_cqe* cqe = nullptr;
-
-        int ret = io_uring_wait_cqe(&ring_, &cqe);
-        if (ret < 0) {
-            std::cout << "WorkerThread : io_uring_wait_cqe" << std::endl;
-            return ret;
-        }
+		IOCompletion completion = ring_.wait_completion();
 
         // TODO: IO Event
-
-        io_uring_cqe_seen(&ring_, cqe);
 
         return 0;
     }

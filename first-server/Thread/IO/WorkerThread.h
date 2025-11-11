@@ -5,7 +5,7 @@
 
 namespace first {
 
-    class WorkerThread : public IORingThread {
+    class WorkerThread : public IOURingThread {
 
     public:
         WorkerThread(int queue_depth = 1024);

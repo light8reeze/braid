@@ -1,6 +1,6 @@
 #pragma once
-
 #include "IORingThread.h"
+#include "IOUringObject.h"
 #include "FirstServerPCH.h"
 
 namespace first {
@@ -17,11 +17,16 @@ namespace first {
 
         private:
             virtual int routine() override;
-            virtual void on_accepted();
+            virtual void on_accepted(IOUringObject* client);
 
 
         protected:
-            SocketFd listen_fd_ = -1;
-            int port_ = 8080;
+            socket_fd   listen_fd_ = -1;
+            int         port_ = 8080;
+
+			IOUringObject acceptor_object_;
+
+            // TODO: 추후 별도 풀로 분리
+			IOUringObject  client_object_[100];
     };
 }

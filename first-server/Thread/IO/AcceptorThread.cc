@@ -1,4 +1,5 @@
 #include "AcceptorThread.h"
+#include "IOCompletion.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
@@ -11,47 +12,50 @@ namespace first {
     }
 
     AcceptorThread::~AcceptorThread() {
-        io_uring_queue_exit(&ring_);
-        close(listen_fd_);
+        close(acceptor_object_.get_socket_fd());
     }
 
     void AcceptorThread::initialize() {
         IOURingThread::initialize();
 
-        listen_fd_ = socket(AF_INET, SOCK_STREAM, 0);
+        socket_fd listen_fd = ::socket(AF_INET, SOCK_STREAM, 0);
 	    int enable = 1;
-	    setsockopt(listen_fd_, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
+	    ::setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
 
         struct sockaddr_in addr = { 0 };
         addr.sin_family = AF_INET;
         addr.sin_port = htons(port_);
         addr.sin_addr.s_addr = INADDR_ANY;
 
-        bind(listen_fd_, (struct sockaddr*)&addr, sizeof(addr));
-        listen(listen_fd_, 128);
+        ::bind(listen_fd, (struct sockaddr*)&addr, sizeof(addr));
+        ::listen(listen_fd, 128);
 
-        // TODO : tptu
+		acceptor_object_.set_socket_fd(listen_fd);
+        acceptor_object_.set_address(addr);
 
-    	io_uring_submit(&ring_);
+        for (IOUringObject& client : client_object_) {
+            ring_.set_accept(acceptor_object_, &client);
+        }
+
+		ring_.submit();
     }
 
     int AcceptorThread::routine() {
-	    io_uring_cqe* cqe = nullptr;
 
-        int ret = io_uring_wait_cqe(&ring_, &cqe);
-        if (ret < 0) {
-            std::cout << "io_uring_wait_cqe" << std::endl;
-            return ret;
-        }
-        
-        // TODO : Handle accepted connection
-        on_accepted();
+		IOCompletion completion = ring_.wait_completion();
 
-        io_uring_cqe_seen(&ring_, cqe);
+        if(0 < completion.get_result())
+            on_accepted(completion.get_completed_object());
 
         return 0;
     }
 
-    void AcceptorThread::on_accepted() {
+	void AcceptorThread::on_accepted(IOUringObject* client) {
+		// TODO : Handle accepted connection
+        if (nullptr == client)
+            return;
+
+        if (client->get_request_type() != IO_EVENT_ACCEPT)
+            return;
     }
 }

@@ -11,7 +11,7 @@ namespace first {
         io_uring_queue_exit(&ring_);
     }
 
-    io_uring* IOURingThread::getRing() {
+    IOUring* IOURingThread::getRing() {
         return &ring_;
     }
 }
