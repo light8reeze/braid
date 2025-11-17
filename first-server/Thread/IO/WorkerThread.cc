@@ -17,7 +17,9 @@ namespace first {
     int WorkerThread::routine() {
 		IOCompletion completion = ring_.wait_completion();
 
-        // TODO: IO Event
+        completion.handle_completion();
+ 
+        ring_.flush_requests();
 
         return 0;
     }

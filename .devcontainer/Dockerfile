@@ -5,13 +5,14 @@ RUN apt update && apt install -y \
     cmake \
     ninja-build \
     git \
-    liburing-dev \
     pkg-config \
     vim \
     curl \
     gdb \
     && rm -rf /var/lib/apt/lists/* \
-    wget
+    wget 
+
+RUN apt-get update && apt-get install -y libboost-all-dev
 
 WORKDIR /workspace
 

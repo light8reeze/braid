@@ -1,5 +1,6 @@
 #include "Thread.h"
 #include <IOUring.h>
+#include <boost/lockfree/queue.hpp>
 
 namespace first {
 
@@ -10,11 +11,7 @@ namespace first {
         virtual ~IOURingThread();
 
 
-    public:
-        IOUring* getRing();
-
-
     protected:
-		IOUring ring_;
+		IORequestQueue ring_queue_;
     };
 }

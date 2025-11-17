@@ -2,6 +2,7 @@
 
 #include "FirstServerPCH.h"
 #include "IORingThread.h"
+#include <boost/lockfree/queue.hpp>
 
 namespace first {
 
@@ -18,5 +19,7 @@ namespace first {
         
     private:
         virtual int routine() override;
+
+        
     };
 }

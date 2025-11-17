@@ -1,15 +1,17 @@
 #pragma once
 #include <liburing.h>
+#include <boost/lockfree/queue.hpp>
 #include "IOCompletion.h"
 
 namespace first {
 
 	class IOUringObject;
-	class IOUring
+	class IOOperation;
+	class IORequestQueue
 	{
 	public:
-		IOUring(int queue_depth = 1024);
-		~IOUring();
+		IORequestQueue(int queue_depth = 1024);
+		~IORequestQueue();
 
 
 	public:
@@ -17,8 +19,11 @@ namespace first {
 		void			set_receive(IOUringObject* io_object);
 		void			set_send(IOUringObject* io_object);
 
-		IOCompletion	wait();
+		IOCompletion	wait(int timeout_ms = -1);
 		void			submit();
+
+		void			push_request(IOOperation* operation);
+		void			flush_requests();
 
 
 	public:
@@ -27,6 +32,8 @@ namespace first {
 
 	private:
 		io_uring ring_;
+		
+		boost::lockfree::queue<IOOperation*> request_queue_;
 	};
 
 }
