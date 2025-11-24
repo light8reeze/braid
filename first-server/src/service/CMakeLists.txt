@@ -1,9 +1,9 @@
 add_library(first-server-service STATIC 
 							"src/thread/AcceptorThread.cc"
-							"src/thread/IOThreadPool.cc"
 							"src/thread/IOURingThread.cc"
 							"src/thread/Thread.cc"
-							"src/thread/WorkerThread.cc")
+							"src/thread/WorkerThread.cc"
+							"src/service/Service.cc")
 
 
 find_package(Boost 1.83 REQUIRED COMPONENTS atomic)

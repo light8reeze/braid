@@ -29,6 +29,8 @@ namespace first {
             return;
         }
 
+        socket_fd client_fd = result;
+
         io_object_->on_accepted();
     }
 }

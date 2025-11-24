@@ -4,9 +4,8 @@
 
 namespace first {
 	
-	// io_uring �̺�Ʈ ��ü �⺻ Ŭ����
-	class IOUringObject
-	{
+	// io_uring를 사용하는 기본 오브젝트
+	class IOUringObject {
 		NON_COPYABLE(IOUringObject);
 
 	public:
@@ -17,7 +16,7 @@ namespace first {
 	public:
 		virtual void on_received(int bytes_received) {};
 		virtual void on_sent(int bytes_sent) {};
-		virtual void on_accepted() {};
+		virtual void on_client_accepted(socket_fd client_fd) {};
 
 
 	public:
@@ -36,10 +35,12 @@ namespace first {
 		struct sockaddr_in& get_address() { return address_; }
 
 
-	private:
-		// TODO: ���� ���� �и�
+	protected:
+		// TODO: 버퍼 클래스 추후 분리
 		char				buffer_[4096] = { 0 };
 
+
+	private:
 		socket_fd			socket_fd_ = -1;
 		struct sockaddr_in	address_ = { 0 };
 	};

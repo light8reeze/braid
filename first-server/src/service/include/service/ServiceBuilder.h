@@ -11,19 +11,41 @@ namespace first {
     requires std::is_base_of_v<Service, ServiceType>
     class ServiceBuilder {
     public:
-        ServiceBuilder();
-        virtual ~ServiceBuilder();
+        ServiceBuilder() {
+            service_instance_ = std::make_shared<ServiceType>();
+        }
+
+        virtual ~ServiceBuilder() = default;
 
 
     public:
-        std::shared_ptr<ServiceType> build() {
-            service_instance_ = new ServiceType(*this);
+		static ServiceBuilder<ServiceType> create_builder() {
+			ServiceBuilder<ServiceType> builder;
+			return builder;
+		}
+
+
+    public:
+        virtual bool validate() {
+            if (nullptr == acceptor_object_)
+                return false;
+
+            return true;
+        }
+
+		std::shared_ptr<ServiceType> build() {
+			assert(nullptr == service_instance_);
+
+            if (!validate())
+                return nullptr;
+
             return service_instance_;
         }
 
         ServiceBuilder<ServiceType>& set_address(std::string address, int port) {
-            if(nullptr == acceptor_object_)
-                acceptor_object_ = new IOUringObject();
+            std::shared_ptr<IOUringObject> acceptor = service_instance_->acceptor_object_;
+            if(nullptr == acceptor)
+                acceptor = std::make_shared<IOUringObject>();
 
             socket_fd listen_fd = socket(AF_INET, SOCK_STREAM, 0);
             int enable = 1;
@@ -41,22 +63,29 @@ namespace first {
             bind(sock_fd, (struct sockaddr*)&addr, sizeof(addr));
             listen(sock_fd, 128);
 
-            acceptor_object_->set_socket_fd(sock_fd);
-            acceptor_object_->set_address(addr);
+            acceptor->set_socket_fd(sock_fd);
+            acceptor->set_address(addr);
 
             return (*this);
         }
 
+        ServiceBuilder<ServiceType>& set_thread_count(int thread_count) {
+            service_instance_->thread_count_ = thread_count;
+			return (*this);
+        }
 
-    public:
-        
+		ServiceBuilder<ServiceType>& set_session_count(int session_count) {
+            service_instance_->session_count_ = session_count;
+			return (*this);
+		}
+
+		ServiceBuilder<ServiceType>& set_queue_depth_per_thread(int queue_depth) {
+            service_instance_->queue_depth_per_thread_ = queue_depth;
+			return (*this);
+		}
 
 
     protected:
-        std::shared_ptr<ServiceType> service_instance_;
-        std::shared_ptr<IOUringObject> acceptor_object_;
-
-        int session_count_;
-        
+        std::shared_ptr<ServiceType> service_instance_ = nullptr;
     };
 }
