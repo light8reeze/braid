@@ -6,7 +6,7 @@ struct io_uring;
 namespace first {
     class IOOperationSend : public IOOperation {
     public:
-        IOOperationSend(IOUringObject* io_object);
+        IOOperationSend(std::shared_ptr<IOUringObject>& io_object);
         virtual ~IOOperationSend() = default;
 
         

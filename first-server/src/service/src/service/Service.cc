@@ -1,11 +1,11 @@
 #include <service/Service.h>
+#include <service/ServiceObject.h>
 #include <thread/WorkerThread.h>
 #include <net/IOOperation.h>
 
 namespace first {
 	Service::Service() 
-		: worker_threads_(){
-		acceptor_object_ = std::make_shared<IOUringObject>();
+		: worker_threads_(), acceptor_object_(std::make_shared<IOUringObject>()) {
 	}
 
 	Service::~Service() {
@@ -15,7 +15,12 @@ namespace first {
 	bool Service::initialize() {
 		initialize_threads();
 
-		// session List를 생성 후 accept 시킨다.
+		// TODO: 추후 Factory클래스로 별도 분리
+		for (int i = 0; i < session_count_; ++i)
+		{
+			sessions_.emplace_back(std::make_shared<ServiceObject>(shared_from_this()));
+			sessions_.back()->request_accept(acceptor_object_->get_socket_fd());
+		}
 
 		return true;
 	}
@@ -33,13 +38,13 @@ namespace first {
 
 	void Service::request_io(IOOperation* operation) {
 		static std::atomic<int> request_index = 0;
-		int thread_index = request_index++ % num_threads_;
+		int thread_index = request_index++ % thread_count_;
 
 		request_io(thread_index, operation);
 	}
 
 	void Service::request_io(int thread_index, IOOperation* operation) {
-		if (thread_index < 0 || thread_index >= num_threads_)
+		if (thread_index < 0 || thread_index >= thread_count_)
 			return;
 
 		worker_threads_[thread_index]->request_io(operation);

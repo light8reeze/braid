@@ -3,7 +3,7 @@
 #include <net/IOUringObject.h>
 
 namespace first {
-    IOOperationRecv::IOOperationRecv(IOUringObject* io_object)
+    IOOperationRecv::IOOperationRecv(std::shared_ptr<IOUringObject>& io_object)
         : IOOperation(io_object) {
     }
 

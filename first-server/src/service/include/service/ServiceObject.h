@@ -5,7 +5,7 @@
 namespace first {
 
 	class Service;
-	// 서비스에 사용되는 기본 오브젝트
+	// 서비스에서 사용되는 기본 오브젝트
 	class ServiceObject : public IOUringObject {
 
 	public:
@@ -16,9 +16,14 @@ namespace first {
 	public:
 		void request_receive();
 		void request_send();
+		void request_accept(socket_fd accept_fd_);
 
 
-	private:
+	public:
+		virtual void on_accepted() override;
+
+
+	protected:
 		const std::weak_ptr<Service> service_instance_;
 	};
 }

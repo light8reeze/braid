@@ -6,12 +6,16 @@ struct io_uring;
 namespace first {
     class IOOperationAccept : public IOOperation {
     public:
-        IOOperationAccept(IOUringObject* io_object);
+        IOOperationAccept(std::shared_ptr<IOUringObject>& io_object, socket_fd listen_fd);
         virtual ~IOOperationAccept() = default;
 
 
     public:
         virtual void request_io(io_uring* ring) override;
         virtual void handle_io_completion(int result) override;
+
+
+    private:
+        socket_fd listen_fd_ = -1;
     };
 }

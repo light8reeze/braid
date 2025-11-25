@@ -5,7 +5,7 @@
 namespace first {
 	
 	// io_uring를 사용하는 기본 오브젝트
-	class IOUringObject {
+	class IOUringObject : public std::enable_shared_from_this<IOUringObject> {
 		NON_COPYABLE(IOUringObject);
 
 	public:
@@ -16,7 +16,7 @@ namespace first {
 	public:
 		virtual void on_received(int bytes_received) {};
 		virtual void on_sent(int bytes_sent) {};
-		virtual void on_client_accepted(socket_fd client_fd) {};
+		virtual void on_accepted() {};
 
 
 	public:

@@ -15,10 +15,6 @@ namespace first {
 
 
 	public:
-		void			set_accept(IOUringObject* acceptor, IOUringObject* io_object);
-		void			set_receive(IOUringObject* io_object);
-		void			set_send(IOUringObject* io_object);
-
 		IOCompletion	wait_one(int timeout_ms = -1);
 		void			submit();
 

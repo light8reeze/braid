@@ -6,7 +6,9 @@ namespace first {
     class IOUringObject;
     class IOOperation {
     public:
-        IOOperation(IOUringObject* io_object);
+        IOOperation(std::shared_ptr<IOUringObject>& io_object)
+            : io_object_(io_object) {
+        }
         virtual ~IOOperation() = default;
 
 

@@ -27,29 +27,28 @@ namespace first {
 
     public:
         virtual bool validate() {
-            if (nullptr == acceptor_object_)
-                return false;
-
             return true;
         }
 
 		std::shared_ptr<ServiceType> build() {
-			assert(nullptr == service_instance_);
+			assert(nullptr != service_instance_);
 
             if (!validate())
                 return nullptr;
 
-            return service_instance_;
+            return std::shared_ptr<ServiceType>(std::move(service_instance_));
         }
 
         ServiceBuilder<ServiceType>& set_address(std::string address, int port) {
             std::shared_ptr<IOUringObject> acceptor = service_instance_->acceptor_object_;
-            if(nullptr == acceptor)
-                acceptor = std::make_shared<IOUringObject>();
+            if (nullptr == acceptor) {
+                service_instance_->acceptor_object_ = std::make_shared<IOUringObject>();
+                acceptor = service_instance_->acceptor_object_;
+            }
 
             socket_fd listen_fd = socket(AF_INET, SOCK_STREAM, 0);
             int enable = 1;
-            setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
+            setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
             
             struct sockaddr_in addr = { 0 };
             addr.sin_family = AF_INET;
@@ -60,10 +59,10 @@ namespace first {
             else 
                 inet_pton(AF_INET, address.c_str(), &(addr.sin_addr));
 
-            bind(sock_fd, (struct sockaddr*)&addr, sizeof(addr));
-            listen(sock_fd, 128);
+            bind(listen_fd, (struct sockaddr*)&addr, sizeof(addr));
+            listen(listen_fd, 128);
 
-            acceptor->set_socket_fd(sock_fd);
+            acceptor->set_socket_fd(listen_fd);
             acceptor->set_address(addr);
 
             return (*this);
@@ -86,6 +85,6 @@ namespace first {
 
 
     protected:
-        std::shared_ptr<ServiceType> service_instance_ = nullptr;
+        std::unique_ptr<ServiceType> service_instance_ = nullptr;
     };
 }

@@ -6,7 +6,7 @@ struct io_uring;
 namespace first {
     class IOOperationRecv : public IOOperation {
     public:
-        IOOperationRecv(IOUringObject* io_object);
+        IOOperationRecv(std::shared_ptr<IOUringObject>& io_object);
         virtual ~IOOperationRecv() = default;
 
         

@@ -1,9 +1,12 @@
 #pragma once
 #include <service/ServiceBuilder.h>
+#include <vector>
 
 namespace first {
     class IOOperation;
-    class Service : std::enable_shared_from_this<Service> {
+    class ServiceObject;
+    class WorkerThread;
+    class Service : public std::enable_shared_from_this<Service> {
     private:
         // ServiceBuilder를 통해서만 생성하도록 한다.
         friend class ServiceBuilder<Service>;
@@ -30,9 +33,10 @@ namespace first {
 
 
 	protected:
-        std::vector<std::unique_ptr<WorkerThread>>  worker_threads_{};
+		std::vector<std::unique_ptr<WorkerThread>>  worker_threads_{};
+		std::vector<std::shared_ptr<ServiceObject>>  sessions_{};
 
-		std::shared_ptr<IOUringObject> acceptor_object_ = nullptr;
+		std::shared_ptr<ServiceObject> acceptor_object_ = nullptr;
 
 		int session_count_          = 1000;
 		int thread_count_           = 4;
