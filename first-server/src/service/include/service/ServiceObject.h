@@ -16,7 +16,7 @@ namespace first {
 	public:
 		void request_receive();
 		void request_send();
-		void request_accept(socket_fd accept_fd_);
+		void request_accept(int accept_fd_);
 
 
 	public:

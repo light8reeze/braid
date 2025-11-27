@@ -5,7 +5,7 @@
 
 namespace first {
 	Service::Service() 
-		: worker_threads_(), acceptor_object_(std::make_shared<IOUringObject>()) {
+		: worker_threads_(), acceptor_object_(std::make_shared<ServiceObject>()) {
 	}
 
 	Service::~Service() {
@@ -18,7 +18,7 @@ namespace first {
 		// TODO: 추후 Factory클래스로 별도 분리
 		for (int i = 0; i < session_count_; ++i)
 		{
-			sessions_.emplace_back(std::make_shared<ServiceObject>(shared_from_this()));
+			sessions_.emplace_back(shared_from_this());
 			sessions_.back()->request_accept(acceptor_object_->get_socket_fd());
 		}
 

@@ -7,9 +7,8 @@ namespace first {
     class ServiceObject;
     class WorkerThread;
     class Service : public std::enable_shared_from_this<Service> {
-    private:
-        // ServiceBuilder를 통해서만 생성하도록 한다.
-        friend class ServiceBuilder<Service>;
+	private:
+		friend class ServiceBuilder<Service>;
 		Service();
 
 

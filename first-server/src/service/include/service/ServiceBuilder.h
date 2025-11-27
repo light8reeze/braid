@@ -1,7 +1,10 @@
 #pragma once
-#include <type_traits>
-#include <util/FirstServerPCH.h>
 #include <memory>
+#include <type_traits>
+#include <cassert>
+#include <util/FirstServerPCH.h>
+#include <service/ServiceObject.h>
+#include <arpa/inet.h>
 
 namespace first {
     class Service;
@@ -11,8 +14,8 @@ namespace first {
     requires std::is_base_of_v<Service, ServiceType>
     class ServiceBuilder {
     public:
-        ServiceBuilder() {
-            service_instance_ = std::make_shared<ServiceType>();
+        ServiceBuilder() : service_instance_() {
+            service_instance_ = std::move(std::unique_ptr<ServiceType>(new ServiceType()));
         }
 
         virtual ~ServiceBuilder() = default;
@@ -20,8 +23,7 @@ namespace first {
 
     public:
 		static ServiceBuilder<ServiceType> create_builder() {
-			ServiceBuilder<ServiceType> builder;
-			return builder;
+            return ServiceBuilder<ServiceType>{};
 		}
 
 
@@ -40,13 +42,13 @@ namespace first {
         }
 
         ServiceBuilder<ServiceType>& set_address(std::string address, int port) {
-            std::shared_ptr<IOUringObject> acceptor = service_instance_->acceptor_object_;
+            std::shared_ptr<ServiceObject> acceptor = service_instance_->acceptor_object_;
             if (nullptr == acceptor) {
-                service_instance_->acceptor_object_ = std::make_shared<IOUringObject>();
+                service_instance_->acceptor_object_ = std::make_shared<ServiceObject>();
                 acceptor = service_instance_->acceptor_object_;
             }
 
-            socket_fd listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+            int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
             int enable = 1;
             setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
             
@@ -57,7 +59,7 @@ namespace first {
             if (address.empty())
                 addr.sin_addr.s_addr = INADDR_ANY;
             else 
-                inet_pton(AF_INET, address.c_str(), &(addr.sin_addr));
+                ::inet_pton(AF_INET, address.c_str(), &(addr.sin_addr));
 
             bind(listen_fd, (struct sockaddr*)&addr, sizeof(addr));
             listen(listen_fd, 128);

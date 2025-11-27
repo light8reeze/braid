@@ -3,8 +3,8 @@
 #include <liburing.h>
 
 namespace first {
-    IOOperationNop::IOOperationNop(std::shared_ptr<IOUringObject>& io_object)
-        : IOOperation(io_object) {
+    IOOperationNop::IOOperationNop(std::shared_ptr<IOUringObject>&& io_object)
+        : IOOperation(std::move(io_object)) {
     }
 
     void IOOperationNop::request_io(io_uring* ring) {

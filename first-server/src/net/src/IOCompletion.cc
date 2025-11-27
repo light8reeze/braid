@@ -13,6 +13,9 @@ namespace first {
 		: ring_(io_completion.ring_), cqe_(io_completion.cqe_) {
 		io_completion.ring_ = nullptr;
 		io_completion.cqe_	= nullptr;
+
+		if (nullptr != completed_operation_)
+			delete completed_operation_;
 	}
 	
 	IOCompletion::~IOCompletion() {

@@ -3,8 +3,8 @@
 #include <net/IOUringObject.h>
 
 namespace first {
-    IOOperationRecv::IOOperationRecv(std::shared_ptr<IOUringObject>& io_object)
-        : IOOperation(io_object) {
+    IOOperationRecv::IOOperationRecv(std::shared_ptr<IOUringObject>&& io_object)
+        : IOOperation(std::move(io_object)) {
     }
 
     void IOOperationRecv::request_io(io_uring* ring) {

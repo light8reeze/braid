@@ -38,7 +38,8 @@ namespace first {
 	}
 
 	void IORequestQueue::push_request(IOOperation* operation) {
-		while (!request_queue_.push(operation)) {
+		int count = 0;
+		while (!request_queue_.push(operation) && count++ < 10) {
 			// TODO: push 회수 제한, 예외처리
 		}
 	}

@@ -26,7 +26,7 @@ namespace first {
 			service_ptr_->request_io(io_send);
 	}
 
-	void ServiceObject::request_accept(socket_fd accept_fd_) {
+	void ServiceObject::request_accept(int accept_fd_) {
 		IOOperationAccept* io_accept = new IOOperationAccept(shared_from_this());
 
 		if (auto service_ptr_ = service_instance_.lock())

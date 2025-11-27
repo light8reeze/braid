@@ -1,6 +1,7 @@
 #pragma once
 #include <util/FirstServerPCH.h>
 #include <netinet/in.h>
+#include <memory>
 
 namespace first {
 	
@@ -26,12 +27,12 @@ namespace first {
 
 		
 	public:
-		void set_socket_fd(socket_fd fd) { socket_fd_ = fd; }
+		void set_socket_fd(int fd) { socket_fd_ = fd; }
 		void set_address(const struct sockaddr_in& addr) { address_ = addr; }
 
 		char*				get_buffer() { return buffer_; }
 		int					get_buffer_size() const { return 4096; }
-		socket_fd			get_socket_fd() const { return socket_fd_; }
+		int					get_socket_fd() const { return socket_fd_; }
 		struct sockaddr_in& get_address() { return address_; }
 
 
@@ -41,7 +42,7 @@ namespace first {
 
 
 	private:
-		socket_fd			socket_fd_ = -1;
+		int					socket_fd_ = -1;
 		struct sockaddr_in	address_ = { 0 };
 	};
 }

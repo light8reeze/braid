@@ -2,7 +2,7 @@
 
 int main() {
 
-	std::shared_ptr<Service> game_service = ServiceBuilder<Service>::create_builder()
+	std::shared_ptr<first::Service> game_service = first::ServiceBuilder<first::Service>::create_builder()
 												.set_address("", 4832)
 												.set_thread_count(16)
 												.set_session_count(100)

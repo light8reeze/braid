@@ -8,7 +8,7 @@ namespace first {
     // 게임 서버 로직에서 이벤트 발생 필요시 해당 클래스를 상속받아서 추가한다. 
     class IOOperationNop : public IOOperation {
     public:
-        IOOperationNop(std::shared_ptr<IOUringObject>& io_object);
+        IOOperationNop(std::shared_ptr<IOUringObject>&& io_object);
         virtual ~IOOperationNop() = default;
 
         

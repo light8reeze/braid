@@ -6,7 +6,7 @@ struct io_uring;
 namespace first {
     class IOOperationAccept : public IOOperation {
     public:
-        IOOperationAccept(std::shared_ptr<IOUringObject>& io_object, socket_fd listen_fd);
+        IOOperationAccept(std::shared_ptr<IOUringObject> io_object, int listen_fd);
         virtual ~IOOperationAccept() = default;
 
 
@@ -16,6 +16,6 @@ namespace first {
 
 
     private:
-        socket_fd listen_fd_ = -1;
+        int listen_fd_ = -1;
     };
 }

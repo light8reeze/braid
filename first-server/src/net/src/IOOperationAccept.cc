@@ -1,9 +1,11 @@
 #include <net/IOOperationAccept.h>
 #include <net/IOUringObject.h>
 #include <liburing.h>
+#include <cassert>
+
 
 namespace first {
-    IOOperationAccept::IOOperationAccept(std::shared_ptr<IOUringObject>& io_object, socket_fd listen_fd)
+    IOOperationAccept::IOOperationAccept(std::shared_ptr<IOUringObject> io_object, int listen_fd)
         : listen_fd_(listen_fd), IOOperation(io_object) {
     }
 
@@ -29,7 +31,7 @@ namespace first {
             return;
         }
 
-        socket_fd client_fd = result;
+        int client_fd = result;
         io_object_->set_socket_fd(client_fd);
         io_object_->on_accepted();
     }
