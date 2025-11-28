@@ -5,7 +5,7 @@
 
 namespace first {
 	Service::Service() 
-		: worker_threads_(), acceptor_object_(std::make_shared<ServiceObject>()) {
+		: worker_threads_() {
 	}
 
 	Service::~Service() {
@@ -15,10 +15,11 @@ namespace first {
 	bool Service::initialize() {
 		initialize_threads();
 
-		// TODO: ÃßÈÄ FactoryÅ¬·¡½º·Î º°µµ ºÐ¸®
+		// TODO: ï¿½ï¿½ï¿½ï¿½ FactoryÅ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¸ï¿½
+		std::shared_ptr<Service> self = shared_from_this();
 		for (int i = 0; i < session_count_; ++i)
 		{
-			sessions_.emplace_back(shared_from_this());
+			sessions_.emplace_back(std::make_shared<ServiceObject>(self));
 			sessions_.back()->request_accept(acceptor_object_->get_socket_fd());
 		}
 

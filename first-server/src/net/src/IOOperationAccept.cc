@@ -5,8 +5,8 @@
 
 
 namespace first {
-    IOOperationAccept::IOOperationAccept(std::shared_ptr<IOUringObject> io_object, int listen_fd)
-        : listen_fd_(listen_fd), IOOperation(io_object) {
+    IOOperationAccept::IOOperationAccept(std::shared_ptr<IOUringObject>&& io_object, int listen_fd)
+        : listen_fd_(listen_fd), IOOperation(std::move(io_object)) {
     }
 
     void IOOperationAccept::request_io(io_uring* ring) {

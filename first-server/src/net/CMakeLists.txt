@@ -19,3 +19,4 @@ target_include_directories(first-server-net PUBLIC ${Boost_INCLUDE_DIRS})
 
 target_link_libraries(first-server-net PUBLIC first-server-util)
 target_link_libraries(first-server-net PUBLIC Boost::boost Boost::atomic)
+target_link_libraries(first-server-net PUBLIC ${LIBURING_LIB})

@@ -1,5 +1,10 @@
 FROM ubuntu:22.04
 
+ARG BOOST_VERSION=1.83.0
+ARG BOOST_DIR=boost_${BOOST_VERSION//./_}
+ARG BOOST_ARCHIVE=${BOOST_DIR}.tar.gz
+ARG BOOST_PREFIX=/usr/local
+
 RUN apt update && apt install -y \
     build-essential \
     cmake \
@@ -9,10 +14,22 @@ RUN apt update && apt install -y \
     vim \
     curl \
     gdb \
-    && rm -rf /var/lib/apt/lists/* \
-    wget 
+    wget \
+    ca-certificates \
+    python3 \
+    libicu-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y libboost-all-dev
+RUN cd /tmp \
+    && wget -q https://archives.boost.io/release/${BOOST_VERSION}/source/${BOOST_ARCHIVE} \
+    && tar -xf ${BOOST_ARCHIVE} \
+    && cd ${BOOST_DIR} \
+    && ./bootstrap.sh --prefix=${BOOST_PREFIX} --with-libraries=atomic,filesystem,system \
+    && ./b2 -j$(nproc) install \
+    && cd /tmp \
+    && rm -rf ${BOOST_DIR} ${BOOST_ARCHIVE}
+
+ENV CMAKE_PREFIX_PATH=${BOOST_PREFIX}:${CMAKE_PREFIX_PATH}
 
 WORKDIR /workspace
 

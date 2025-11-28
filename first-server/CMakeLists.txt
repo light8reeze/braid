@@ -23,5 +23,5 @@ target_link_libraries(first-server PRIVATE
                                     ${LIBURING_LIB}
                                     ${Boost_LIBRARIES}
                                     first-server-net
-                                    first-server-thread
+                                    first-server-util
                                     first-server-service)

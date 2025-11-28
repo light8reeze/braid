@@ -5,7 +5,7 @@
 namespace first {
 
 	class Service;
-	// ¼­ºñ½º¿¡¼­ »ç¿ëµÇ´Â ±âº» ¿ÀºêÁ§Æ®
+	// ï¿½ï¿½ï¿½ñ½º¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½âº» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	class ServiceObject : public IOUringObject {
 
 	public:
@@ -21,6 +21,7 @@ namespace first {
 
 	public:
 		virtual void on_accepted() override;
+		virtual void on_received(int bytes_received) override;
 
 
 	protected:

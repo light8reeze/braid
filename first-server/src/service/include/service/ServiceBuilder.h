@@ -8,14 +8,12 @@
 
 namespace first {
     class Service;
-    class IOUringObject;
 
     template<typename ServiceType = Service>
     requires std::is_base_of_v<Service, ServiceType>
     class ServiceBuilder {
     public:
-        ServiceBuilder() : service_instance_() {
-            service_instance_ = std::move(std::unique_ptr<ServiceType>(new ServiceType()));
+        ServiceBuilder() : service_instance_(std::unique_ptr<ServiceType>(new ServiceType())) {
         }
 
         virtual ~ServiceBuilder() = default;
@@ -38,34 +36,36 @@ namespace first {
             if (!validate())
                 return nullptr;
 
-            return std::shared_ptr<ServiceType>(std::move(service_instance_));
+            std::shared_ptr<ServiceType> build_service_instance = std::shared_ptr<ServiceType>(std::move(service_instance_));
+
+            std::shared_ptr<ServiceObject> acceptor = build_service_instance->acceptor_object_;
+            if (nullptr == acceptor) {
+                build_service_instance->acceptor_object_ = std::make_shared<ServiceObject>(build_service_instance);
+                acceptor = build_service_instance->acceptor_object_;
+            }
+
+            acceptor->set_socket_fd(listen_fd_);
+            acceptor->set_address(acceptor_addr_);
+
+            return build_service_instance;
         }
 
         ServiceBuilder<ServiceType>& set_address(std::string address, int port) {
-            std::shared_ptr<ServiceObject> acceptor = service_instance_->acceptor_object_;
-            if (nullptr == acceptor) {
-                service_instance_->acceptor_object_ = std::make_shared<ServiceObject>();
-                acceptor = service_instance_->acceptor_object_;
-            }
 
-            int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+            listen_fd_ = socket(AF_INET, SOCK_STREAM, 0);
             int enable = 1;
-            setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
+            setsockopt(listen_fd_, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
             
-            struct sockaddr_in addr = { 0 };
-            addr.sin_family = AF_INET;
-            addr.sin_port = htons(port);
+            acceptor_addr_.sin_family = AF_INET;
+            acceptor_addr_.sin_port = htons(port);
 
             if (address.empty())
-                addr.sin_addr.s_addr = INADDR_ANY;
+                acceptor_addr_.sin_addr.s_addr = INADDR_ANY;
             else 
-                ::inet_pton(AF_INET, address.c_str(), &(addr.sin_addr));
+                ::inet_pton(AF_INET, address.c_str(), &(acceptor_addr_.sin_addr));
 
-            bind(listen_fd, (struct sockaddr*)&addr, sizeof(addr));
-            listen(listen_fd, 128);
-
-            acceptor->set_socket_fd(listen_fd);
-            acceptor->set_address(addr);
+            bind(listen_fd_, (struct sockaddr*)&acceptor_addr_, sizeof(acceptor_addr_));
+            listen(listen_fd_, 128);
 
             return (*this);
         }
@@ -88,5 +88,9 @@ namespace first {
 
     protected:
         std::unique_ptr<ServiceType> service_instance_ = nullptr;
+
+        int                 listen_fd_ = -1;
+        int                 port_ = 0;
+        struct sockaddr_in  acceptor_addr_;
     };
 }

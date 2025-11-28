@@ -13,14 +13,14 @@ namespace first {
 		: ring_(io_completion.ring_), cqe_(io_completion.cqe_) {
 		io_completion.ring_ = nullptr;
 		io_completion.cqe_	= nullptr;
-
-		if (nullptr != completed_operation_)
-			delete completed_operation_;
 	}
 	
 	IOCompletion::~IOCompletion() {
 		if (nullptr != ring_ && nullptr != cqe_)
 			::io_uring_cqe_seen(ring_, cqe_);
+
+		if (nullptr != completed_operation_)
+			delete completed_operation_;
 	}
 
 	int IOCompletion::get_result() const {

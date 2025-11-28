@@ -8,7 +8,6 @@ namespace first {
     }
 
     IOURingThread::~IOURingThread() {
-        io_uring_queue_exit(ring_queue_.get_ring());
     }
 
     void IOURingThread::request_io(IOOperation* operation) {

@@ -1,4 +1,5 @@
 ﻿#include <service/Service.h>
+#include <memory>
 
 int main() {
 
