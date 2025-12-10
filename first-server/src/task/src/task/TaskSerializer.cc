@@ -8,23 +8,23 @@ namespace first {
     }
 
     void TaskSerializer::push(ITask* task) {
-        bool isEmpty = task_queue_.empty();
+        bool wasEmpty = task_queue_.empty();
         task_queue_.push(task);
 
-        if(isEmpty) {
+        if(true == wasEmpty) {
 
             // 현재 처리중인 TaskSerializer가 없으면 바로 처리한다.
             if(nullptr == tl_process_task_serializer)
-                g_task_distributor->process_task_serializer(this);
+                g_task_distributor.process_task_serializer(this);
             else
-            g_task_distributor->add_task_serializer(this);
+                g_task_distributor.add_task_serializer(this);
         }
     }
 
-    std::shared_ptr<ITask> TaskSerializer::pop() {
+    ObjectPtr<ITask> TaskSerializer::pop() {
         ITask* task;
         task_queue_.pop(task);
-        return std::shared_ptr<ITask>(task);
+        return ObjectPtr<ITask>(task);
     }
 
     void TaskSerializer::set_destroy() {
@@ -33,15 +33,28 @@ namespace first {
         state_.store(DESTROYING);
     }
 
+    bool TaskSerializer::pop(ObjectPtr<ITask>& task) {
+        ITask* taskPtr;
+        
+        if(true == task_queue_.pop(taskPtr)) {
+            task = ObjectPtr<ITask>(taskPtr);
+            return true;
+        }
+        
+        return false;
+    }
+
     TaskSerializer::STATE TaskSerializer::state() const {
         return state_.load();
     }
 
     void TaskSerializer::clear() {
-        while (!task_queue_.empty()) {
+        while (false == task_queue_.empty()) {
             ITask* task;
             task_queue_.pop(task);
-            delete task;
+
+            if(nullptr != task)
+                task->release();
         }
 
         state_.store(DESTROYED);

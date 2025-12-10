@@ -23,7 +23,7 @@ namespace first {
         boost::lockfree::queue<TaskSerializer*> serializer_queue_;
     };
 
-    TaskDistributor* g_task_distributor = nullptr;
+    static TaskDistributor g_task_distributor;
 
-    thread_local TaskSerializer* tl_process_task_serializer = nullptr;
+    thread_local static TaskSerializer* tl_process_task_serializer = nullptr;
 }

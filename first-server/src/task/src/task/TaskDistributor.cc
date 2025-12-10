@@ -26,9 +26,9 @@ namespace first {
 
         tl_process_task_serializer = task_serializer;
 
-        std::shared_ptr<ITask> task;
+        ObjectPtr<ITask> task;
         int process_count = 0;
-        while (tl_process_task_serializer->pop(task)) {
+        while (task = tl_process_task_serializer->pop()) {
             task->invoke();
 
             process_count++;

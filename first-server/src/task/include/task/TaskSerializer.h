@@ -1,17 +1,19 @@
 #pragma once
 #include <boost/lockfree/queue.hpp>
+#include <task/RefCountable.h>
 #include <task/Task.h>
 
 namespace first {
 
     class ITask;
-    class TaskSerializer {
+    class TaskSerializer : public RefCountable {
     public:
         enum STATE {
             RUNNING,
             DESTROYING,
             DESTROYED
         };
+        
 
     public:
         TaskSerializer() = default;
@@ -21,17 +23,29 @@ namespace first {
     private:
         void push(ITask* task);
 
-
+        
     public:
         template<typename Obj, typename Func, typename... Args>
-        void request_task(Obj&& obj, Func&& func, Args&&... args) {
+        requires std::is_base_of_v<RefCountable, Obj>
+        void request_task(Obj* obj, Func&& func, Args&&... args) {
             if (state_.load() != RUNNING)
                 return;
 
-            push(new Task<Obj, Func, Args...>(std::forward<Obj>(obj), std::forward<Func>(func), std::forward<Args>(args)...));
+            push(new Task<Obj, Func, Args...>(obj, std::forward<Func>(func), std::forward<Args>(args)...));
+        }
+        
+        template<typename ObjPtrT, typename Func, typename... Args>
+        requires std::is_base_of_v<RefCountable, std::decay_t<ObjPtrT>::T>
+        void request_task(ObjPtrT&& obj, Func&& func, Args&&... args) {
+            if (state_.load() != RUNNING)
+                return;
+
+            push(new Task<ObjPtrT&&, Func, Args...>(std::forward<ObjPtrT>(obj), std::forward<Func>(func), std::forward<Args>(args)...));
         }
 
-        std::shared_ptr<ITask> pop();
+        ObjectPtr<ITask> pop();
+
+        bool pop(ObjectPtr<ITask>& task);
 
         void set_destroy();
 
