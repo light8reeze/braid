@@ -4,7 +4,7 @@
 #include <task/RefCountable.h>
 #include <util/Utility.h>
 
-namespace first {
+namespace braid {
 
     class ITask : public RefCountable {
     public:

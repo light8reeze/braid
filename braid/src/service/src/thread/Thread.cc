@@ -1,6 +1,6 @@
 #include <thread/Thread.h>
 
-namespace first {
+namespace braid {
     
     void Thread::initialize() {
         is_stop_ = false;

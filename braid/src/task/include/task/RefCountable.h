@@ -2,7 +2,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <assert.h>
 
-namespace first {
+namespace braid {
 
     // boost::instrusive_ptr을 사용하기 위한 클래스
     // lock-free를 사용하기 위해 자체 ref_count를 사용한다.

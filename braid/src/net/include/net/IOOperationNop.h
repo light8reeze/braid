@@ -3,7 +3,7 @@
 
 struct io_uring;
 
-namespace first {
+namespace braid {
     // io_uring 이벤트를 발생시키기 위해 사용하는 오퍼레이션
     // 게임 서버 로직에서 이벤트 발생 필요시 해당 클래스를 상속받아서 추가한다. 
     class IOOperationNop : public IOOperation {

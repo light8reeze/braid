@@ -1,6 +1,6 @@
 #pragma once
 
-namespace first {
+namespace braid {
     class MessageHeader {
     public:
         int     size;

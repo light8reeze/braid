@@ -1,7 +1,7 @@
 #pragma once
 #include <boost/lockfree/queue.hpp>
 
-namespace first {
+namespace braid {
     
     // 각 WorkerThread에 TaskSerializer을 분배하는 클래스
     class TaskSerializer;

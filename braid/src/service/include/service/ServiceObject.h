@@ -2,10 +2,10 @@
 #include <net/IOUringObject.h>
 #include <memory>
 
-namespace first {
+namespace braid {
 
 	class Service;
-	// ���񽺿��� ���Ǵ� �⺻ ������Ʈ
+	// 서비스 레이어에서 사용하는 기본 오브젝트
 	class ServiceObject : public IOUringObject {
 
 	public:

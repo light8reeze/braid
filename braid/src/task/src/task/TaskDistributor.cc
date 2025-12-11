@@ -2,7 +2,7 @@
 #include <task/TaskSerializer.h>
 #include <cassert>
 
-namespace first {
+namespace braid {
 
     void TaskDistributor::add_task_serializer(TaskSerializer* task_serializer) {
         serializer_queue_.push(task_serializer);

@@ -3,7 +3,7 @@
 #include <thread/WorkerThread.h>
 #include <net/IOOperation.h>
 
-namespace first {
+namespace braid {
 	Service::Service() 
 		: worker_threads_() {
 	}
@@ -15,7 +15,7 @@ namespace first {
 	bool Service::initialize() {
 		initialize_threads();
 
-		// TODO: ���� FactoryŬ������ ���� �и�
+		// TODO: Session Factory를 사용하여 생성
 		sessions_.reserve(session_count_);
 		std::shared_ptr<Service> self = shared_from_this();
 		for (int i = 0; i < session_count_; ++i)

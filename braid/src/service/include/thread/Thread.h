@@ -2,7 +2,7 @@
 #include <thread>
 #include <util/Macro.h>
 
-namespace first {
+namespace braid {
 
 	class Thread{
 		NON_COPYABLE(Thread);

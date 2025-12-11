@@ -3,7 +3,7 @@
 #include <vector>
 #include <atomic>
 
-namespace first {
+namespace braid {
     class IOOperation;
     class ServiceObject;
     class WorkerThread;

@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-namespace first {
+namespace braid {
 	ServiceObject::ServiceObject(std::shared_ptr<Service>& service_instance) 
 		: service_instance_(service_instance) {
 		

@@ -1,4 +1,4 @@
-add_library(first-server-service STATIC 
+add_library(braid-service STATIC 
 							"src/thread/IOURingThread.cc"
 							"src/thread/Thread.cc"
 							"src/thread/WorkerThread.cc"
@@ -8,11 +8,11 @@ add_library(first-server-service STATIC
 
 find_package(Boost 1.83 REQUIRED COMPONENTS atomic)
 
-target_include_directories(first-server-service PUBLIC
+target_include_directories(braid-service PUBLIC
 	"${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
-target_include_directories(first-server-service PUBLIC ${Boost_INCLUDE_DIRS})
+target_include_directories(braid-service PUBLIC ${Boost_INCLUDE_DIRS})
 
-target_link_libraries(first-server-service PUBLIC first-server-net first-server-util)
-target_link_libraries(first-server-service PUBLIC Boost::boost Boost::atomic)
-target_link_libraries(first-server-service PUBLIC first-server-task)
+target_link_libraries(braid-service PUBLIC braid-net braid-util)
+target_link_libraries(braid-service PUBLIC Boost::boost Boost::atomic)
+target_link_libraries(braid-service PUBLIC braid-task)
