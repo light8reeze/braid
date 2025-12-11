@@ -18,6 +18,7 @@ RUN apt update && apt install -y \
     ca-certificates \
     python3 \
     libicu-dev \
+    liburing-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN cd /tmp \

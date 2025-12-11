@@ -5,7 +5,7 @@
             "name": "Linux Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/first-server/first-server",
+            "program": "${workspaceFolder}/build/braid/braid",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
