@@ -1,4 +1,4 @@
-#include <thread/Thread.h>
+#include <braid/thread/Thread.h>
 
 namespace braid {
     

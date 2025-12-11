@@ -1,7 +1,7 @@
-#include <service/Service.h>
-#include <service/ServiceObject.h>
-#include <thread/WorkerThread.h>
-#include <net/IOOperation.h>
+#include <braid/service/Service.h>
+#include <braid/service/ServiceObject.h>
+#include <braid/thread/WorkerThread.h>
+#include <braid/net/IOOperation.h>
 
 namespace braid {
 	Service::Service() 

@@ -1,7 +1,7 @@
 #pragma once
 #include <boost/lockfree/queue.hpp>
-#include <task/RefCountable.h>
-#include <task/Task.h>
+#include <braid/task/RefCountable.h>
+#include <braid/task/Task.h>
 
 namespace braid {
 

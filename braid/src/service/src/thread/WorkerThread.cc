@@ -1,5 +1,5 @@
-#include <thread/WorkerThread.h>
-#include <task/TaskDistributor.h>
+#include <braid/thread/WorkerThread.h>
+#include <braid/task/TaskDistributor.h>
 #include <iostream>
 
 namespace braid {

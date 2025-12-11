@@ -1,8 +1,8 @@
 #pragma once
 #include <tuple>
 #include <functional>
-#include <task/RefCountable.h>
-#include <util/Utility.h>
+#include <braid/task/RefCountable.h>
+#include <braid/util/Utility.h>
 
 namespace braid {
 

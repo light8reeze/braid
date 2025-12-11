@@ -1,6 +1,6 @@
-#include <task/TaskSerializer.h>
-#include <task/TaskDistributor.h>
-#include <task/Task.h>
+#include <braid/task/TaskSerializer.h>
+#include <braid/task/TaskDistributor.h>
+#include <braid/task/Task.h>
 
 namespace braid {
     TaskSerializer::~TaskSerializer() {

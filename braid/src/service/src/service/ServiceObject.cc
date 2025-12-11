@@ -1,9 +1,9 @@
-#include <service/ServiceObject.h>
-#include <service/Service.h>
+#include <braid/service/ServiceObject.h>
+#include <braid/service/Service.h>
 
-#include <net/IOOperationRecv.h>
-#include <net/IOOperationSend.h>
-#include <net/IOOperationAccept.h>
+#include <braid/net/IOOperationRecv.h>
+#include <braid/net/IOOperationSend.h>
+#include <braid/net/IOOperationAccept.h>
 
 #include <iostream>
 

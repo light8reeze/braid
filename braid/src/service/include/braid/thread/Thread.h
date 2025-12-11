@@ -1,6 +1,6 @@
 #pragma once
 #include <thread>
-#include <util/Macro.h>
+#include <braid/util/Macro.h>
 
 namespace braid {
 

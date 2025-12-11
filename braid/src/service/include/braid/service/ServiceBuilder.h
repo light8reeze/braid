@@ -2,8 +2,8 @@
 #include <memory>
 #include <type_traits>
 #include <cassert>
-#include <util/BraidPCH.h>
-#include <service/ServiceObject.h>
+#include <braid/util/BraidPCH.h>
+#include <braid/service/ServiceObject.h>
 #include <arpa/inet.h>
 
 namespace braid {
