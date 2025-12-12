@@ -19,14 +19,15 @@ namespace braid {
 	}
 
 	void ServiceSession::request_receive() {
-		IOOperationRecv* io_recv = new IOOperationRecv(shared_from_this());
+		std::span<char> received_span = get_received_span();
+		IOOperationRecv* io_recv = new IOOperationRecv(shared_from_this(), received_span);
 
 		if (auto service_ptr_ = service_instance_.lock())
 			service_ptr_->request_io(io_recv);
 	}
 
-	void ServiceSession::request_send() {
-		IOOperationSend* io_send = new IOOperationSend(shared_from_this());
+	void ServiceSession::request_send(std::span<char>& send_buffer) {
+		IOOperationSend* io_send = new IOOperationSend(shared_from_this(), send_buffer);
 
 		if (auto service_ptr_ = service_instance_.lock())
 			service_ptr_->request_io(io_send);

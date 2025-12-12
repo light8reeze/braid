@@ -4,8 +4,8 @@
 #include <braid/net/IOUringObject.h>
 
 namespace braid {
-    IOOperationRecv::IOOperationRecv(std::shared_ptr<IOUringObject>&& io_object)
-        : IOOperation(std::move(io_object)) {
+    IOOperationRecv::IOOperationRecv(std::shared_ptr<IOUringObject>&& io_object, std::span<char>& buffer)
+        : IOOperation(std::move(io_object)), buffer_(buffer) {
     }
 
     void IOOperationRecv::request_io(io_uring* ring) {
@@ -13,8 +13,7 @@ namespace braid {
 
 		io_uring_sqe* sqe = io_uring_get_sqe(ring);
         
-        std::span<char> span = io_object_->get_remain_span();
-		::io_uring_prep_recv(sqe, io_object_->get_socket_fd(), span.data(), span.size(), 0);
+		::io_uring_prep_recv(sqe, io_object_->get_socket_fd(), buffer_.data(), buffer_.size(), 0);
 		::io_uring_sqe_set_data(sqe, this);
     }
 

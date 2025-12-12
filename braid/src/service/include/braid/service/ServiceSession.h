@@ -1,6 +1,7 @@
 #pragma once
 #include <braid/net/IOUringObject.h>
 #include <braid/service/Actor.h>
+#include <span>
 #include <memory>
 
 namespace braid {
@@ -16,7 +17,7 @@ namespace braid {
 
 	public:
 		void request_receive();
-		void request_send();
+		void request_send(std::span<char>& send_buffer);
 		void request_accept(int accept_fd_);
 
 
