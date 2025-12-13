@@ -14,14 +14,13 @@
 
 namespace braid {
 	ServiceSession::ServiceSession(std::shared_ptr<Service>& service_instance) 
-		: service_instance_(service_instance), main_actor_(new Actor()) {
-		
+		: service_instance_(service_instance), main_actor_(nullptr) {
 		assert(nullptr != service_instance);
 	}
 
 	void ServiceSession::request_receive() {
-		std::span<char> received_span = get_received_span();
-		IOOperationRecv* io_recv = new IOOperationRecv(shared_from_this(), received_span);
+		std::span<char> remain_span = get_remain_span();
+		IOOperationRecv* io_recv = new IOOperationRecv(shared_from_this(), remain_span);
 
 		if (auto service_ptr_ = service_instance_.lock())
 			service_ptr_->request_io(io_recv);
@@ -52,7 +51,8 @@ namespace braid {
 	void ServiceSession::on_accepted() {
 		if(main_actor_ == nullptr) {
 			main_actor_ = new Actor();
-			main_actor_->set_session(shared_from_this());
+
+			main_actor_->set_session(std::static_pointer_cast<ServiceSession>(shared_from_this()));
 		}
 
 		request_receive();
@@ -61,7 +61,7 @@ namespace braid {
 	void ServiceSession::on_received(int bytes_received) {
 
 		do {
-			if (bytes_received < sizeof(MessageHeader))
+			if (commited_size_ < sizeof(MessageHeader))
 				break;
 			
 			std::span<char> message_span = get_received_span();
@@ -84,8 +84,9 @@ namespace braid {
 			main_actor_.reset();
 		}
 
+		reset();
 		if(auto service_ptr_ = service_instance_.lock())
-			service_ptr_->on_session_closed(shared_from_this());
+			service_ptr_->on_session_closed(std::static_pointer_cast<ServiceSession>(shared_from_this()));
 	}
 
 	void ServiceSession::on_receive_failed(int error_code) {

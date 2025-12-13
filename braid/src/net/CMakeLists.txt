@@ -1,6 +1,7 @@
 add_library(braid-net STATIC 
 							"src/IOCompletion.cc"
 							"src/IOOperationAccept.cc"
+							"src/IOOperationClose.cc"
 							"src/IOOperationNop.cc"
 							"src/IOOperationRecv.cc"
 							"src/IOOperationSend.cc"

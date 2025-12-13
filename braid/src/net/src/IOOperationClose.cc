@@ -1,4 +1,5 @@
 #include <braid/net/IOOperationClose.h>
+#include <braid/net/IOUringObject.h>
 
 namespace braid {
     IOOperationClose::IOOperationClose(std::shared_ptr<IOUringObject>&& io_object) 

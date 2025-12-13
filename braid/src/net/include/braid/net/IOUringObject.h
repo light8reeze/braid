@@ -11,6 +11,10 @@ namespace braid {
 	class IOUringObject : public std::enable_shared_from_this<IOUringObject> {
 		NON_COPYABLE(IOUringObject);
 
+	protected:
+		constexpr static int MAX_RECEIVE_BUFFER_SIZE = 4096;
+
+
 	public:
 		IOUringObject() = default;
 		virtual ~IOUringObject() = default;
@@ -20,6 +24,7 @@ namespace braid {
 		virtual void on_received(int bytes_received) {};
 		virtual void on_sent(int bytes_sent) {};
 		virtual void on_accepted() {};
+		virtual void on_closed() {};
 
 
 	public:
@@ -29,6 +34,7 @@ namespace braid {
 
 		
 	public:
+		void reset() { commited_size_ = 0; }
 		void commit(int size) { commited_size_ += size; }
 		void process_completed(int size) {
 			if(0 < commited_size_ - size)
@@ -43,16 +49,16 @@ namespace braid {
 		void set_address(const struct sockaddr_in& addr) { address_ = addr; }
 
 		char*				get_buffer() { return buffer_; }
-		int					get_buffer_size() const { return 4096 - commited_size_; }
+		int					get_buffer_size() const { return MAX_RECEIVE_BUFFER_SIZE - commited_size_; }
 		int					get_socket_fd() const { return socket_fd_; }
 		struct sockaddr_in& get_address() { return address_; }
 
 		std::span<char> get_received_span() { return std::span<char>(buffer_, commited_size_); }
-		std::span<char> get_remain_span() { return std::span<char>(buffer_ + commited_size_, 4096 - commited_size_); }
+		std::span<char> get_remain_span() { return std::span<char>(buffer_ + commited_size_, MAX_RECEIVE_BUFFER_SIZE - commited_size_); }
 
 
 	protected:
-		char				buffer_[4096] = { 0 };
+		char				buffer_[MAX_RECEIVE_BUFFER_SIZE] = { 0 };
 		int					commited_size_ = 0;
 
 

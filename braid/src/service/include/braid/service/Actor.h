@@ -13,7 +13,7 @@ namespace braid {
 
 
     public:
-        void set_session(std::shared_ptr<ServiceSession> session) { session_ = session; }
+        void set_session(std::shared_ptr<ServiceSession>&& session) { session_ = std::move(session); }
         void reset_session() { session_.reset(); }
 
         void request_send(ObjectPtr<SendBuffer> send_buffer);
