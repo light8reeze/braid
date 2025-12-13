@@ -7,6 +7,7 @@
 
 #include <braid/net/IOOperationRecv.h>
 #include <braid/net/IOOperationAccept.h>
+#include <braid/net/IOOperationClose.h>
 #include <braid/net/IOOperationSendBuffer.h>
 
 #include <iostream>
@@ -41,8 +42,19 @@ namespace braid {
 			service_ptr_->request_io(io_accept);
 	}
 
+	void ServiceSession::request_close() {
+		IOOperationClose* io_close = new IOOperationClose(shared_from_this());
+
+		if (auto service_ptr_ = service_instance_.lock())
+			service_ptr_->request_io(io_close);
+	}
+
 	void ServiceSession::on_accepted() {
-		std::cout << "on accepted" << std::endl;
+		if(main_actor_ == nullptr) {
+			main_actor_ = new Actor();
+			main_actor_->set_session(shared_from_this());
+		}
+
 		request_receive();
 	}
 
@@ -64,5 +76,25 @@ namespace braid {
 		while(false);
 
 		request_receive();
+	}
+
+	void ServiceSession::on_closed() {
+		if(nullptr != main_actor_) {
+			main_actor_->on_closed();
+			main_actor_.reset();
+		}
+
+		if(auto service_ptr_ = service_instance_.lock())
+			service_ptr_->on_session_closed(shared_from_this());
+	}
+
+	void ServiceSession::on_receive_failed(int error_code) {
+		if(nullptr != main_actor_)
+			main_actor_->request_close();
+	}
+
+	void ServiceSession::on_send_failed(int error_code) {
+		if(nullptr != main_actor_)
+			main_actor_->request_close();
 	}
 }

@@ -1,9 +1,8 @@
 #pragma once
-#include <memory>
-
 #include <braid/net/IOUringObject.h>
 #include <braid/service/Actor.h>
 #include <braid/message/SendBuffer.h>
+#include <memory>
 
 namespace braid {
 
@@ -20,11 +19,16 @@ namespace braid {
 		void request_receive();
 		void request_send(ObjectPtr<SendBuffer> send_buffer);
 		void request_accept(int accept_fd_);
+		void request_close();
 
 
 	public:
 		virtual void on_accepted() override;
 		virtual void on_received(int bytes_received) override;
+		virtual void on_closed() override;
+
+		virtual void on_receive_failed(int error_code) override;
+		virtual void on_send_failed(int error_code) override;
 
 
 	protected:

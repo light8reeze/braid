@@ -27,6 +27,8 @@ namespace braid {
 		void request_io(IOOperation* operation);
 		void request_io(int thread_index, IOOperation* operation);
 
+        void on_session_closed(std::shared_ptr<ServiceSession> session);
+
 
     private:
         virtual void initialize_threads();

@@ -3,7 +3,16 @@
 
 namespace braid {
     void Actor::request_send(ObjectPtr<SendBuffer> send_buffer) {
-        if (session_)
+        if (nullptr != session_)
             session_->request_send(send_buffer);
+    }
+
+    void Actor::request_close() {
+        if (nullptr != session_)
+            session_->request_close();
+    }
+
+    void Actor::on_closed() {
+        session_.reset();
     }
 }

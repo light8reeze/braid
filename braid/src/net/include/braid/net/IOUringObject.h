@@ -52,7 +52,6 @@ namespace braid {
 
 
 	protected:
-		// TODO: 버퍼 클래스 추후 분리
 		char				buffer_[4096] = { 0 };
 		int					commited_size_ = 0;
 

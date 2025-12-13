@@ -15,7 +15,13 @@ namespace braid {
     public:
         void set_session(std::shared_ptr<ServiceSession> session) { session_ = session; }
         void reset_session() { session_.reset(); }
+
         void request_send(ObjectPtr<SendBuffer> send_buffer);
+        void request_close();
+
+
+    public:
+        virtual void on_closed();
 
 
     private:

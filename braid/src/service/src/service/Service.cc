@@ -51,6 +51,10 @@ namespace braid {
 		worker_threads_[thread_index]->request_io(operation);
 	}
 
+	void Service::on_session_closed(std::shared_ptr<ServiceSession> session) {
+		session->request_accept(acceptor_object_->get_socket_fd());
+	}
+
 	void Service::initialize_threads() {
 		for (int i = 0; i < thread_count_; ++i) {
 			worker_threads_.emplace_back(std::make_unique<WorkerThread>(queue_depth_per_thread_));
