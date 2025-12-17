@@ -136,8 +136,8 @@ int main(int argc, char *argv[]) {
       });
 
   auto service = braid::ServiceBuilder<braid::Service>::create_builder()
-                     .set_address("", 4832)
-                     .set_thread_count(16)
+                     .set_address("", 4832, 4096)
+                     .set_thread_count(36)
                      .set_session_count(10000)
                 	  .set_queue_depth_per_thread(10000)
                      .build();

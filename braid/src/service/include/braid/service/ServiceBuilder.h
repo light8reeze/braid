@@ -47,10 +47,12 @@ namespace braid {
             acceptor->set_socket_fd(listen_fd_);
             acceptor->set_address(acceptor_addr_);
 
+            build_service_instance->backlog_ = backlog_;
+
             return build_service_instance;
         }
 
-        ServiceBuilder<ServiceType>& set_address(std::string address, int port) {
+        ServiceBuilder<ServiceType>& set_address(std::string address, int port, int backlog) {
 
             listen_fd_ = socket(AF_INET, SOCK_STREAM, 0);
             int enable = 1;
@@ -65,12 +67,13 @@ namespace braid {
                 ::inet_pton(AF_INET, address.c_str(), &(acceptor_addr_.sin_addr));
 
             bind(listen_fd_, (struct sockaddr*)&acceptor_addr_, sizeof(acceptor_addr_));
-            listen(listen_fd_, 128);
+            listen(listen_fd_, backlog);
+			backlog_ = backlog;
 
             return (*this);
         }
 
-        ServiceBuilder<ServiceType>& set_thread_count(int thread_count) {
+        ServiceBuilder<ServiceType>& set_thread_count(int thread_count) { 
             service_instance_->thread_count_ = thread_count;
 			return (*this);
         }
@@ -91,6 +94,7 @@ namespace braid {
 
         int                 listen_fd_ = -1;
         int                 port_ = 0;
+		int                 backlog_ = 128;
         struct sockaddr_in  acceptor_addr_;
     };
 }
