@@ -24,7 +24,7 @@ namespace braid {
         virtual ~TaskSerializer();
 
 
-    protected:
+    private:
         void push(ITask* task);
 
         
