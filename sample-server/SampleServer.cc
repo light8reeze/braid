@@ -94,6 +94,36 @@ void timestamp_task(Actor *actor, long long timestamp, std::string message) {
   std::cout << "[Task] Echo sent back to client." << std::endl;
 }
 
+class TestSerializer : public TaskSerializer {
+public:
+    TestSerializer() : TaskSerializer(60000) {}
+    virtual ~TestSerializer() = default;
+
+public:
+    // for timestamp_task function template specialization
+    void request_task(Actor* actor, void (*func)(Actor*, long long, std::string), long long timestamp, std::string message) {
+        timestamp_queue_.push(timestamp);
+        auto* task = new Task<Actor, void (*)(Actor*, long long, std::string), long long, std::string>(actor, std::move(func), std::move(timestamp), std::move(message));
+        task->timestamp = timestamp;
+        push(task);
+    }
+
+    ObjectPtr<ITask> pop() {
+        long long timestamp;
+        assert(timestamp_queue_.pop(timestamp));
+        
+        ObjectPtr<ITask> task = TaskSerializer::pop();
+        assert(task);
+        task->timestamp = timestamp;
+        
+        return task;
+    }
+
+    boost::lockfree::queue<long long, boost::lockfree::capacity<60000>> timestamp_queue_;
+};
+
+TestSerializer serializer;
+
 int main(int argc, char *argv[]) {
   std::cout << "Starting Sample Server..." << std::endl;
 
@@ -128,7 +158,7 @@ int main(int argc, char *argv[]) {
             "seq=" + std::to_string(seq) + "; ts=" + std::to_string(current_time) +
             "; " + message_content;
 
-         timestamp_task(actor.get(), current_time, wrapped_message);
+        serializer.request_task(actor.get(), timestamp_task, std::move(current_time), std::move(wrapped_message));
 
         // Mutate locals after enqueue to catch accidental reference-captures.
         current_time = -1;
@@ -136,7 +166,8 @@ int main(int argc, char *argv[]) {
       });
 
   auto service = braid::ServiceBuilder<braid::Service>::create_builder()
-                     .set_address("", 4832, 4096)
+                     .set_address("", 4832)
+                     .set_backlog(4096)
                      .set_thread_count(36)
                      .set_session_count(10000)
                 	  .set_queue_depth_per_thread(10000)

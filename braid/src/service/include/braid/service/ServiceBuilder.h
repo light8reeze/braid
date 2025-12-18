@@ -13,9 +13,8 @@ namespace braid {
     requires std::is_base_of_v<Service, ServiceType>
     class ServiceBuilder {
     public:
-        ServiceBuilder() : service_instance_(std::unique_ptr<ServiceType>(new ServiceType())) {
-        }
-
+        ServiceBuilder() : service_instance_(std::unique_ptr<ServiceType>(new ServiceType())) {}
+        
         virtual ~ServiceBuilder() = default;
 
 
@@ -37,27 +36,13 @@ namespace braid {
                 return nullptr;
 
             std::shared_ptr<ServiceType> build_service_instance = std::shared_ptr<ServiceType>(std::move(service_instance_));
-
-            std::shared_ptr<ServiceSession> acceptor = build_service_instance->acceptor_object_;
-            if (nullptr == acceptor) {
-                build_service_instance->acceptor_object_ = std::make_shared<ServiceSession>(build_service_instance);
-                acceptor = build_service_instance->acceptor_object_;
-            }
-
-            acceptor->set_socket_fd(listen_fd_);
-            acceptor->set_address(acceptor_addr_);
-
-            build_service_instance->backlog_ = backlog_;
+            build_service_instance->acceptor_object_ = build_acceptor(build_service_instance);
 
             return build_service_instance;
         }
 
-        ServiceBuilder<ServiceType>& set_address(std::string address, int port, int backlog) {
+        ServiceBuilder<ServiceType>& set_address(std::string address, int port) {
 
-            listen_fd_ = socket(AF_INET, SOCK_STREAM, 0);
-            int enable = 1;
-            setsockopt(listen_fd_, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
-            
             acceptor_addr_.sin_family = AF_INET;
             acceptor_addr_.sin_port = htons(port);
 
@@ -66,10 +51,11 @@ namespace braid {
             else 
                 ::inet_pton(AF_INET, address.c_str(), &(acceptor_addr_.sin_addr));
 
-            bind(listen_fd_, (struct sockaddr*)&acceptor_addr_, sizeof(acceptor_addr_));
-            listen(listen_fd_, backlog);
-			backlog_ = backlog;
+            return (*this);
+        }
 
+        ServiceBuilder<ServiceType>& set_backlog(int backlog) {
+            backlog_ = backlog;
             return (*this);
         }
 
@@ -87,6 +73,25 @@ namespace braid {
             service_instance_->queue_depth_per_thread_ = queue_depth;
 			return (*this);
 		}
+
+
+    private:
+        std::shared_ptr<ServiceSession> build_acceptor(std::shared_ptr<ServiceType>& service_ptr) {
+            std::shared_ptr<Service> service_instance = std::static_pointer_cast<Service>(service_ptr);
+            std::shared_ptr<ServiceSession> acceptor = std::make_shared<ServiceSession>(service_instance);
+
+            listen_fd_ = socket(AF_INET, SOCK_STREAM, 0);
+            int enable = 1;
+            setsockopt(listen_fd_, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
+            
+            bind(listen_fd_, (struct sockaddr*)&acceptor_addr_, sizeof(acceptor_addr_));
+            listen(listen_fd_, backlog_);
+
+            acceptor->set_socket_fd(listen_fd_);
+            acceptor->set_address(acceptor_addr_);
+            
+            return acceptor;
+        }
 
 
     protected:
