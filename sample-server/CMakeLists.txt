@@ -21,7 +21,6 @@ target_include_directories(sample-server PRIVATE ${LIBURING_INCLUDE})
 target_link_libraries(sample-server PRIVATE
                                     ${LIBURING_LIB}
                                     ${Boost_LIBRARIES}
-                                    braid-net
                                     braid-util
                                     braid-service
                                     braid-task)

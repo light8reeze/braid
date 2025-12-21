@@ -8,5 +8,4 @@ target_include_directories(braid-memory INTERFACE
 
 target_include_directories(braid-memory INTERFACE ${Boost_INCLUDE_DIRS})
 target_link_libraries(braid-memory INTERFACE braid-util)
-target_link_libraries(braid-memory INTERFACE braid-service)
 target_link_libraries(braid-memory INTERFACE Boost::boost)
