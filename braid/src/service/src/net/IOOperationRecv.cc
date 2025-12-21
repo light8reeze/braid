@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <braid/net/IOOperationRecv.h>
 #include <braid/net/IOUringObject.h>
+#include <braid/service/IOPool.h>
 
 namespace braid {
     IOOperationRecv::IOOperationRecv(std::shared_ptr<IOUringObject>&& io_object, std::span<char>& buffer)
@@ -27,5 +28,9 @@ namespace braid {
 
         io_object_->commit(result);
         io_object_->on_received(result);
+    }
+
+    void IOOperationRecv::on_zero_ref() {
+        g_io_pool.release(this);
     }
 }

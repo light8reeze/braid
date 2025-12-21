@@ -15,5 +15,4 @@ namespace braid {
             on_zero_ref();
         }
     };
-
 }

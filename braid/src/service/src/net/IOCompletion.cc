@@ -1,12 +1,14 @@
 #include <braid/net/IOCompletion.h>
-#include <braid/net/IOOperation.h>
+
 #include <liburing.h>
 
 namespace braid {
 	IOCompletion::IOCompletion(io_uring* ring, io_uring_cqe* cqe)
-		: ring_(ring), cqe_(cqe) {
-		if(nullptr != cqe_)
-			completed_operation_ = reinterpret_cast<IOOperation*>(::io_uring_cqe_get_data(cqe_));
+		: ring_(ring), cqe_(cqe) {	
+		if(nullptr != cqe_) {
+			IOOperation* op = reinterpret_cast<IOOperation*>(::io_uring_cqe_get_data(cqe_));
+			completed_operation_ = std::move(ObjectPtr<IOOperation>(op, false));
+		}
 	}
 
 	IOCompletion::IOCompletion(IOCompletion&& io_completion) noexcept
@@ -16,9 +18,6 @@ namespace braid {
 	}
 	
 	IOCompletion::~IOCompletion() {
-
-		if (nullptr != completed_operation_)
-			delete completed_operation_;
 
 		if (nullptr != ring_ && nullptr != cqe_)
 			::io_uring_cqe_seen(ring_, cqe_);

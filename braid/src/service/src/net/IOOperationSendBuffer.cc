@@ -1,5 +1,6 @@
 #include <braid/net/IOOperationSendBuffer.h>
 #include <braid/net/IOUringObject.h>
+#include <braid/service/IOPool.h>
 
 namespace braid {
     IOOperationSendBuffer::IOOperationSendBuffer(std::shared_ptr<IOUringObject>&& io_object, ObjectPtr<SendBuffer> send_buffer)
@@ -21,5 +22,9 @@ namespace braid {
             return;
 
         io_object_->on_sent(result);
+    }
+
+    void IOOperationSendBuffer::on_zero_ref() {
+        g_io_pool.release(this);
     }
 }

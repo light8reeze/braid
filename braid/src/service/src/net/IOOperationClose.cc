@@ -1,5 +1,6 @@
 #include <braid/net/IOOperationClose.h>
 #include <braid/net/IOUringObject.h>
+#include <braid/service/IOPool.h>
 
 namespace braid {
     IOOperationClose::IOOperationClose(std::shared_ptr<IOUringObject>&& io_object) 
@@ -16,4 +17,8 @@ namespace braid {
     }
 
     void IOOperationClose::handle_io_completion(int result) {}
+
+    void IOOperationClose::on_zero_ref() {
+        g_io_pool.release(this);
+    }
 }

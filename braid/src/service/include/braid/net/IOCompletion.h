@@ -1,11 +1,11 @@
 #pragma once
 #include <braid/util/Macro.h>
+#include <braid/net/IOOperation.h>
 
 struct io_uring;
 struct io_uring_cqe;
 
 namespace braid {	
-	class IOOperation;
 	class IOCompletion {
 		NON_COPYABLE(IOCompletion);
 
@@ -21,12 +21,12 @@ namespace braid {
 
 	public:
 		int get_result() const;
-		IOOperation* get_completed_operation() const { return completed_operation_; }
+		IOOperation* get_completed_operation() const { return completed_operation_.get(); }
 		
 
 	private:
-		io_uring*		ring_ = nullptr;
-		io_uring_cqe*	cqe_ = nullptr;
-		IOOperation*	completed_operation_ = nullptr;
+		io_uring*				ring_ = nullptr;
+		io_uring_cqe*			cqe_ = nullptr;
+		ObjectPtr<IOOperation> 	completed_operation_ = nullptr;
 	};
 }

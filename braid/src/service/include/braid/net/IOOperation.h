@@ -1,10 +1,12 @@
 #pragma once
+#include <braid/memory/PooledObject.h>
+
 #include <liburing.h>
 #include <memory>
 
 namespace braid {
     class IOUringObject;
-    class IOOperation {
+    class IOOperation : public PooledObject {
     public:
         IOOperation(std::shared_ptr<IOUringObject>&& io_object)
             : io_object_(std::move(io_object)) {

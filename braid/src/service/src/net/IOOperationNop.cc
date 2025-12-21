@@ -1,5 +1,6 @@
 #include <braid/net/IOOperationNop.h>
 #include <braid/net/IOUringObject.h>
+#include <braid/service/IOPool.h>
 #include <liburing.h>
 
 namespace braid {
@@ -30,5 +31,9 @@ namespace braid {
             return;
 
         on_event_completed();
+    }
+
+    void IOOperationNop::on_zero_ref() {
+        g_io_pool.release(this);
     }
 }

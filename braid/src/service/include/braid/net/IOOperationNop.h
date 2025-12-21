@@ -20,5 +20,6 @@ namespace braid {
     protected:
         virtual void on_event_request() = 0;
         virtual void on_event_completed() = 0;
+        virtual void on_zero_ref() override;
     };
 }

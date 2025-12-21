@@ -1,5 +1,6 @@
 #include <braid/net/IOOperationAccept.h>
 #include <braid/net/IOUringObject.h>
+#include <braid/service/IOPool.h>
 #include <liburing.h>
 #include <cassert>
 
@@ -34,5 +35,9 @@ namespace braid {
         int client_fd = result;
         io_object_->set_socket_fd(client_fd);
         io_object_->on_accepted();
+    }
+
+    void IOOperationAccept::on_zero_ref() {
+        g_io_pool.release(this);
     }
 }

@@ -13,6 +13,7 @@ namespace braid {
     public:
         virtual void request_io(io_uring* ring) override;
         virtual void handle_io_completion(int result) override;
+        virtual void on_zero_ref() override;
 
 
     private:

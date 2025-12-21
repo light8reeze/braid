@@ -29,10 +29,11 @@ namespace braid {
 
         template<typename T, typename... Args>
         void request_io(Args&&... args) {
-            T* operation = io_pool_.acquire<T>(std::forward<Args>(args)...);
+            T* operation = g_io_pool.acquire<T>(std::forward<Args>(args)...);
             if (operation == nullptr)
                 return;
 
+            operation->add_ref();
             request_io(operation);
         }
 
@@ -58,7 +59,6 @@ namespace braid {
         // Session Pool : 세션 개수는 고정하기 때문에 ObjectPool을 굳이 사용하지 않는다.
 		std::vector<std::shared_ptr<ServiceSession>>  sessions_{};
         boost::lockfree::queue<ServiceSession*> sessions_queue_{static_cast<size_t>(session_count_)};
-        IOPool io_pool_;
 
 
     protected:

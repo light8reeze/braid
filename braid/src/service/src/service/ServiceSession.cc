@@ -14,38 +14,32 @@
 
 namespace braid {
 	ServiceSession::ServiceSession(std::shared_ptr<Service>& service_instance) 
-		: service_instance_(service_instance), main_actor_(nullptr) {
+		: service_instance_(service_instance)
+		, main_actor_(nullptr) {
 		assert(nullptr != service_instance);
 	}
 
 	void ServiceSession::request_receive() {
 		std::span<char> remain_span = get_remain_span();
-		IOOperationRecv* io_recv = new IOOperationRecv(shared_from_this(), remain_span);
 
 		if (auto service_ptr_ = service_instance_.lock())
-			service_ptr_->request_io(io_recv);
+			service_ptr_->request_io<IOOperationRecv>(shared_from_this(), remain_span);
 	}
 
 	void ServiceSession::request_send(ObjectPtr<SendBuffer> send_buffer) {
-		IOOperationSendBuffer* io_send = new IOOperationSendBuffer(shared_from_this(), send_buffer);
-
 		if (auto service_ptr_ = service_instance_.lock())
-			service_ptr_->request_io(io_send);
+			service_ptr_->request_io<IOOperationSendBuffer>(shared_from_this(), send_buffer);
 	}
 
 
 	void ServiceSession::request_accept(int accept_fd_) {
-		IOOperationAccept* io_accept = new IOOperationAccept(shared_from_this(), accept_fd_);
-
 		if (auto service_ptr_ = service_instance_.lock())
-			service_ptr_->request_io(io_accept);
+			service_ptr_->request_io<IOOperationAccept>(shared_from_this(), accept_fd_);
 	}
 
 	void ServiceSession::request_close() {
-		IOOperationClose* io_close = new IOOperationClose(shared_from_this());
-
 		if (auto service_ptr_ = service_instance_.lock())
-			service_ptr_->request_io(io_close);
+			service_ptr_->request_io<IOOperationClose>(shared_from_this());
 	}
 
 	void ServiceSession::on_accepted() {
