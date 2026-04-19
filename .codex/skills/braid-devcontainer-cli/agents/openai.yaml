@@ -1,0 +1,4 @@
+interface:
+  display_name: "Braid Devcontainer CLI"
+  short_description: "Run Braid builds in its devcontainer"
+  default_prompt: "Use $braid-devcontainer-cli to build and run Braid inside the project devcontainer."

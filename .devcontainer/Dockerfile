@@ -32,10 +32,12 @@ RUN cd /tmp \
     && cd /tmp \
     && rm -rf ${BOOST_DIR} ${BOOST_ARCHIVE}
 
+# Install AI agents
 RUN npm install -g @anthropic-ai/claude-code
+RUN npm install -g @openai/codex
 
 ENV CMAKE_PREFIX_PATH=${BOOST_PREFIX}:${CMAKE_PREFIX_PATH}
 
-WORKDIR /workspace
+WORKDIR /braid
 
 CMD ["/bin/bash"]

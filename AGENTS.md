@@ -18,8 +18,16 @@ Keep changes small and consistent with the current design. This repository is pe
 - `sample-server` registers message handlers and exercises service behavior.
 - `test-client` is a Linux socket/epoll load client.
 - `.devcontainer` defines an Ubuntu-based development environment with Boost, liburing, CMake, and compiler tooling.
+- `.codex/skills/braid-devcontainer-cli` contains the repo-local Codex skill for compiling, executing, and smoke-testing Braid through the VS Code Dev Containers CLI.
 
 Generated build artifacts may exist in `build/`, `out/`, `CMakeFiles/`, and `braid/build/`. Do not edit those artifacts as source.
+
+## Repo-Local Skills
+
+- Use the `braid-devcontainer-cli` skill when the task involves configuring, compiling, executing, testing, debugging, or verifying Braid in Linux from a non-Linux host.
+- Skill path: `.codex/skills/braid-devcontainer-cli/SKILL.md`.
+- Command reference: `.codex/skills/braid-devcontainer-cli/references/commands.md`.
+- Prefer this skill's Dev Containers CLI workflow over running Linux-only build commands directly on macOS.
 
 ## Build And Run
 
@@ -31,7 +39,21 @@ Required dependencies:
 - Boost 1.83 or newer
 - Ninja when using the presets
 
-Preferred configure/build commands on Linux:
+Preferred configure/build commands through the repo devcontainer:
+
+```bash
+devcontainer exec --workspace-folder . cmake --preset linux-debug
+devcontainer exec --workspace-folder . cmake --build out/build/linux-debug
+```
+
+Release build through the repo devcontainer:
+
+```bash
+devcontainer exec --workspace-folder . cmake --preset linux-release
+devcontainer exec --workspace-folder . cmake --build out/build/linux-release
+```
+
+Equivalent commands when already inside a Linux environment such as the devcontainer:
 
 ```bash
 cmake --preset linux-debug
@@ -47,7 +69,16 @@ cmake --build build
 
 Runnable targets are expected under the chosen build directory. Typical manual flow is to start the server target, then run `test-client` against `127.0.0.1:4832`.
 
-There is no dedicated automated test suite in the current tree. For verification, build the changed target at minimum. For networking behavior changes, use `sample-server` and `test-client` manually when the environment supports `io_uring`.
+Devcontainer execution flow:
+
+```bash
+devcontainer exec --workspace-folder . ./out/build/linux-debug/sample-server/sample-server
+devcontainer exec --workspace-folder . ./out/build/linux-debug/test-client/test-client 10
+```
+
+Use separate terminal sessions for the server and client. Stop long-running server/client processes before finishing unless the user asks to keep them running.
+
+There is no dedicated automated test suite in the current tree. For verification, build the changed target at minimum. For networking behavior changes, use the `braid-devcontainer-cli` skill and run `sample-server` plus `test-client` manually through the devcontainer when the environment supports `io_uring`.
 
 ## Coding Conventions
 

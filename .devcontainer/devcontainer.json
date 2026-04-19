@@ -17,15 +17,16 @@
       }
     }
   },
-
-  "workspaceFolder": "/workspace",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
   
-  // Enable ptrace for debugging
+  "remoteUser": "root",
+
+  "workspaceFolder": "/braid",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/braid,type=bind",
+  
+  // Enable ptrace for debugging 
   "capAdd": ["SYS_PTRACE"],
   "securityOpt": ["seccomp=unconfined"],
   
-  "remoteUser": "root",
   
   "postCreateCommand": "cmake --version && g++ --version"
 }
